@@ -40,7 +40,9 @@ function previewPublicArchive(archive,packed,integrity){
   for(const key of ['PATH','SystemRoot','TEMP','TMP','TMPDIR']) if(process.env[key]) env[key]=process.env[key];
   const args=[process.env.npm_execpath,'publish',archive,'--dry-run','--offline','--ignore-scripts','--json',
     `--registry=${registry}`,'--access=public',`--tag=${tag}`,`--userconfig=${join(home,'user.npmrc')}`,`--globalconfig=${join(home,'global.npmrc')}`];
-  const result=JSON.parse(execFileSync(process.execPath,args,{cwd:home,env,encoding:'utf8',stdio:['ignore','pipe','inherit'],timeout:60_000}));
+  const preview=JSON.parse(execFileSync(process.execPath,args,{cwd:home,env,encoding:'utf8',stdio:['ignore','pipe','inherit'],timeout:60_000}));
+  // npm 10 returns the tarball directly; npm 11 can key the same record by package name.
+  const result=Object.hasOwn(preview,manifest.name)?preview[manifest.name]:preview;
   assert.equal(result.name,manifest.name);assert.equal(result.version,manifest.version);
   assert.equal(result.integrity,integrity,'npm preview did not use the tested tarball');assert.equal(result.size,packed.size);
   console.log(`NPM DRY RUN ${result.id} | tag=${tag} | access=public | ${result.size} bytes | ${result.integrity}`);
