@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "lib": ["ES2024"],
+    "newLine": "lf",
+    "rootDir": "src", "outDir": "dist", "strict": true, "declaration": true,
+    "allowJs": true, "verbatimModuleSyntax": true, "skipLibCheck": true,
+    "types": ["node"], "noEmitOnError": true
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,15 @@
+import {createBackend} from 'action-workbench';
+import {createHttpServer} from 'action-workbench/http';
+import {localCodex} from 'action-workbench/codex';
+import {directory} from './access.ts';
+import {meetingModules} from './bookings.ts';
+import {openStore} from './store.ts';
+const port=Number(process.env.PORT ?? 4882);
+if(!Number.isInteger(port)||port<0||port>65535) throw new Error('Invalid PORT');
+const db=openStore(), users=directory(db);
+const api=createBackend({database:db,modules:meetingModules(db)});
+const provider=process.argv.includes('--ai')?localCodex():null;
+const http=createHttpServer(api,{provider,authenticate:req=>users.authenticate(req.headers.authorization)});
+http.addHook('onClose',async()=>db.close());
+for (const sig of ['SIGINT','SIGTERM']) process.once(sig,()=>{void http.close()});
+console.log(`Meeting rooms: ${await http.listen({host:'127.0.0.1',port})} | AI: ${provider?.label ?? 'off'}`);

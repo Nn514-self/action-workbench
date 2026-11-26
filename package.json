@@ -1,0 +1,41 @@
+{
+  "name": "action-workbench",
+  "version": "0.5.0-rc.2",
+  "license": "MIT",
+  "author": "Nn514-self",
+  "repository": { "type": "git", "url": "git+https://github.com/Nn514-self/action-workbench.git" },
+  "homepage": "https://github.com/Nn514-self/action-workbench#readme",
+  "bugs": { "url": "https://github.com/Nn514-self/action-workbench/issues" },
+  "publishConfig": { "registry": "https://registry.npmjs.org/", "access": "public", "tag": "next" },
+  "type": "module",
+  "description": "Node.js business modules with one execution contract for HTTP and optional AI.",
+  "engines": { "node": "^22.18.0 || ^24.0.0 || ^26.0.0" },
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./assistant": "./dist/assistant.js",
+    "./codex": "./dist/codex.js",
+    "./http": "./dist/http.js"
+  },
+  "files": [
+    "dist/assistant.js", "dist/assistant.d.ts", "dist/backend.js", "dist/backend.d.ts",
+    "dist/codex.js", "dist/codex.d.ts", "dist/decision.schema.json", "dist/errors.js", "dist/errors.d.ts",
+    "dist/execution.js", "dist/execution.d.ts", "dist/http.js", "dist/http.d.ts", "dist/index.js", "dist/index.d.ts",
+    "dist/migrations.js", "dist/migrations.d.ts", "dist/model-budget.js", "dist/model-budget.d.ts",
+    "dist/module.js", "dist/module.d.ts", "dist/openapi.js", "dist/openapi.d.ts", "dist/pending.js", "dist/pending.d.ts",
+    "bin/create-action-backend.mjs", "starter/expenses.ts", "starter/orders.ts", "starter/server.ts", "starter/tsconfig.json", "starter/README.md"
+  ],
+  "bin": { "create-action-backend": "bin/create-action-backend.mjs" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node -e \"require('node:fs').copyFileSync('src/decision.schema.json','dist/decision.schema.json')\"",
+    "start": "node starter/server.ts",
+    "start:ai": "node starter/server.ts --ai",
+    "test": "npm run build && tsc -p starter/tsconfig.json && node --test test/*.test.js",
+    "compat:check": "node scripts/compatibility.mjs",
+    "release:check": "node scripts/release-check.mjs",
+    "release:public-check": "node scripts/release-check.mjs --public",
+    "prepublishOnly": "node -e \"console.error('Directory publish is disabled. Run npm run release:public-check and use the verified .tgz with an explicit tag.'); process.exit(1)\""
+  },
+  "dependencies": { "fastify": "5.12.8", "zod": "4.6.7" },
+  "devDependencies": { "@types/node": "22.20.7", "typescript": "6.0.3" }
+}

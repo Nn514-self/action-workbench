@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "type": { "type": "string", "enum": ["reply", "call", "revise"] },
+    "text": { "type": "string", "description": "Answer or clarifying question for reply; empty otherwise." },
+    "name": { "type": "string", "description": "Executable tool name for call; current pending action name for revise; empty for reply." },
+    "arguments": { "type": "string", "description": "Full JSON-encoded argument object for call or revise; {} for reply." }
+  },
+  "required": ["type", "text", "name", "arguments"]
+}

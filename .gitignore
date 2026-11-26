@@ -1,0 +1,13 @@
+node_modules/
+.data/
+dist/
+*.tgz
+!/action-workbench-0.4.0.tgz
+!/example/meeting-rooms/action-workbench-0.5.0-rc.2.tgz
+.env
+.env.*
+.npmrc
+*.sqlite
+*.sqlite-*
+/docs/compatibility/
+/docs/release-readiness/

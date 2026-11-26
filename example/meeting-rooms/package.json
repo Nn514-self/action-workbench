@@ -1,0 +1,7 @@
+{
+  "name": "meeting-room-backend", "version": "1.0.0", "private": true, "type": "module",
+  "engines": {"node":"^22.18.0 || ^24.0.0 || ^26.0.0"},
+  "scripts": {"start":"node server.ts", "start:ai":"node server.ts --ai", "access":"node manage.ts", "check":"tsc --noEmit", "test":"npm run check && node --test test/*.test.mjs", "test:ai":"node acceptance/codex.mjs"},
+  "dependencies": {"action-workbench":"file:./action-workbench-0.5.0-rc.2.tgz", "zod":"4.6.7"},
+  "devDependencies": {"@types/node":"22.20.7", "typescript":"6.0.3"}
+}

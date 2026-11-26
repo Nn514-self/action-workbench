@@ -1,0 +1,52 @@
+name: Package compatibility
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compatibility:
+    name: ${{ matrix.os }} / Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+        node: ['22.18.0', '22.x', '24.x', '26.x']
+        include:
+          - {os: ubuntu-24.04, node: '24.0.0'}
+          - {os: ubuntu-24.04, node: '26.0.0'}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --engine-strict --no-audit --no-fund
+      - run: npm test
+      # All runners consume the same checked-in archive; do not rebuild or refresh the pin here.
+      - run: npm run compat:check -- --verify-build
+      - run: npm ci --ignore-scripts --engine-strict --no-audit --no-fund
+        working-directory: example/meeting-rooms
+      - run: npm test
+        working-directory: example/meeting-rooms
+      - name: Check the pinned native Codex CLI without an account
+        if: runner.os == 'Windows' && matrix.node == '24.x'
+        shell: pwsh
+        run: ./scripts/windows-codex-smoke.ps1
+  required:
+    name: Compatibility gate
+    permissions: {}
+    needs: compatibility
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require every native runner
+        shell: bash
+        env:
+          MATRIX_RESULT: ${{ needs.compatibility.result }}
+        run: test "$MATRIX_RESULT" = success
